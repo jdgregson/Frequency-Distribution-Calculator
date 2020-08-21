@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Frequency Distribution Calculator - Calculate word and letter frequency in text.</title>
+  <meta name="description" content="Frequency Distribution Calculator is a tool to calculate word and letter frequency in text. Useful for calculating word frequency distribution, letter frequency distribution, and character frequency distribution."/>
+  <meta name="robots" content="index, follow"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap" rel="stylesheet">
+  <script src="js/text-frequency-analyzer.js"></script>
+  <script src="lib/stardust/js/stardust.js"></script>
+  <script src="js/app.js"></script>
+  <script data-ad-client="ca-pub-8916076004725712" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-168770483-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-168770483-1');
+  </script>
+</head>
+<body>
+
+<div id="header" class="card card-1">
+  <div id="header-inner">
+    <div id="header-back-wrap" style="right: 100%;">
+      <svg id="header-back-svg">
+        <g transform="matrix(0.5,-0.5,0.5,0.5,10,19)">
+          <path d="M27,2L2,2L2,27" style="fill:none;stroke:black;stroke-width:5px;"/>
+        </g>
+      </svg>
+    </div>
+    <h1 id="header-title">Frequency Distribution Calculator</h1>
+    <div id="side-menu-button-wrap">
+      <svg id="side-menu-button-svg">
+        <g transform="matrix(1,0,0,1,1,3)">
+          <g transform="matrix(1,0,0,1,3,1)">
+            <path d="M6,16.037L26,16.037"/>
+          </g>
+          <g transform="matrix(1,0,0,1,3,-7)">
+            <path d="M6,16.037L26,16.037"/>
+          </g>
+          <g transform="matrix(1,0,0,1,3,9)">
+            <path d="M6,16.037L26,16.037"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+<div id="bumper"></div>
+<div id="loading-bar"></div>
+
+<div id="outer-wrap">
+  <div id="inner-wrap">
+    <div class="body-text-outer-wrap">
+      <span class="body-text">Frequency Distribution Calculator is a tool to help you calculate and analyze word and character frequency distribution in text. You can use it to calculate word rank, word count, character count, and letter count. Or to find and analyze Zipfian distributions (text that follows <a href="https://en.wikipedia.org/wiki/Zipf%27s_law">Zipf's law</a>). You can even use it to calculate the entropy of text, or locate hapax legomena in text.</span>
+    </div>
+    <div id="app-wrap" class="card card-1">
+      <div id="textarea-wrap" class="two-thirds first">
+        <textarea id="input-textarea" placeholder="Enter or paste text to analyze..."></textarea>
+      </div>
+      <div id="options-wrap" class="one-third">
+        <div id="options-inner-wrap">
+          <div class="option-wrap">
+            <label for="wordSplit">Analyze</label>
+            <select bindOption="wordSplit" id="wordSplit" name="wordSplit">
+              <option value="true">Words</option>
+              <option value="false">Characters</option>
+            </select>
+          </div>
+          <div class="option-wrap">
+            <input type="checkbox" id="removePunctuation" bindOption="removePunctuation"/>
+            <label for="removePunctuation">Remove punctuation</label>
+          </div>
+          <div class="option-wrap">
+            <input type="checkbox" id="removeSpace" bindOption="removeSpace"/>
+            <label for="removeSpace">Remove spaces</label>
+          </div>
+          <div class="option-wrap">
+            <input type="checkbox" id="ignoreCase" bindOption="ignoreCase"/>
+            <label for="ignoreCase">Ignore case</label>
+          </div>
+          <div class="option-wrap">
+            <input type="checkbox" id="showZipfLine" bindOption="showZipfLine"/>
+            <label for="showZipfLine">Show Zipf line</label>
+          </div>
+          <div class="option-wrap">
+            <input type="checkbox" id="sortDescending" bindOption="sortDescending"/>
+            <label for="sortDescending">Sort descending</label>
+          </div>
+        </div>
+        <div id="button-inner-wrap">
+          <button id="demo-button">DEMO</button>
+          <button id="analyze-button">ANALYZE</button>
+        </div>
+      </div>
+    </div>
+    <div id="insights-wrap" class="card card-1"></div>
+    <div id="output-wrap"></div>
+    <div class="body-text-outer-wrap">
+      <div id="body-text-inner-wrap">
+        <h2 class="body-text-title">Frequency Distribution Calculator has many features, including the following:</h2>
+        <div class="one-third first body-text-block">
+          <h2 class="body-text-title new-feature">Save and Export</h2>
+          <span class="body-text">Easily save the results of your analysis to a CSV file.</span>
+        </div>
+        <div class="one-third body-text-block">
+          <h2 class="body-text-title">Analyze Zipfian Distributions</h2>
+          <span class="body-text">Determine whether or not a given selection of text follows Zipf's Law.</span>
+        </div>
+        <div class="one-third body-text-block">
+          <h2 class="body-text-title">Calculate Entropy</h2>
+          <span class="body-text">Estimate the entropy of a given selection of text using <a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)" target="_blank">Shannon's entropy calculations.</a></span>
+        </div>
+        <br>
+        <div class="one-third first body-text-block">
+          <h2 class="body-text-title">Hapax Legomena Locator</h2>
+          <span class="body-text">Locate <a href="https://youtu.be/fCn8zs912OE?t=1014">hapax legomena</a> in text, which are words that appear only once in a given selection of text.</span>
+        </div>
+        <div class="one-third body-text-block">
+          <h2 class="body-text-title">Word Count</h2>
+          <span class="body-text">Count the number of words in text. Analyze the rank and frequency of words in text.</span>
+        </div>
+        <div class="one-third body-text-block">
+          <h2 class="body-text-title">Character Count</h2>
+          <span class="body-text">Count the number of characters in text. Analyze the rank and frequency of letters and characters in text.</span>
+        </div>
+        <div id="bumper"></div>
+      </div>
+    </div>
+  </div>
+  <div id="bottom-ad-space" class="card card-1">
+  </div>
+</div>
+
+<div id="side-menu-wrap">
+  <div id="side-menu-inner">
+    <a href="#">
+      <div class="side-menu-row">
+        <span class="side-menu-text">Theme</span>
+        <div class="side-menu-action">
+          <select bindOption="theme" bindAction="change:applyTheme">
+            <option value="dark">DARK</option>
+            <option value="light">LIGHT</option>
+          </select>
+        </div>
+      </div>
+      <div class="side-menu-row">
+        <input type="checkbox" bindAction="change:toggleBodyText" bindOption="hideBodyText" name="hideBodyText" id="hideBodyText" class="large"/>
+        <label for="hideBodyText">Hide body text</label>
+      </div>
+      <div class="side-menu-row">
+        <input type="checkbox" bindOption="hideAds" name="hideAds" id="hideAds" class="large"/>
+        <label for="hideAds">Hide ads</label>
+      </div>
+      <div class="side-menu-row" onclick="resetOptions()">Reset settings</div>
+    </a>
+  </div>
+</div>
+
+<div id="demo-text" style="display: none;">Zipf's law is an empirical law formulated using mathematical statistics that refers to the fact that many types of data studied in the physical and social sciences can be approximated with a Zipfian distribution, one of a family of related discrete power law probability distributions. Zipf distribution is related to the zeta distribution, but is not identical.
+
+Zipf's law was originally formulated in terms of quantitative linguistics, stating that given some corpus of natural language utterances, the frequency of any word is inversely proportional to its rank in the frequency table. Thus the most frequent word will occur approximately twice as often as the second most frequent word, three times as often as the third most frequent word, etc.: the rank-frequency distribution is an inverse relation. For example, in the Brown Corpus of American English text, the word the is the most frequently occurring word, and by itself accounts for nearly 7% of all word occurrences (69,971 out of slightly over 1 million). True to Zipf's Law, the second-place word of accounts for slightly over 3.5% of words (36,411 occurrences), followed by and (28,852). Only 135 vocabulary items are needed to account for half the Brown Corpus.
+
+The same relationship occurs in many other rankings of human created systems, such as the ranks of mathematical expressions or ranks of notes in music, and even in uncontrolled environments, such as the population ranks of cities in various countries, corporation sizes, income rankings, ranks of number of people watching the same TV channel, and so on.
+
+Although Zipf's Law holds for all languages, even non-natural ones like Esperanto, the reason is still not well understood. However, it may be partially explained by the statistical analysis of randomly generated texts. Wentian Li has shown that in a document in which each character has been chosen randomly from a uniform distribution of all letters (plus a space character), the "words" with different lengths follow the macro-trend of the Zipf's law (the more probable words are the shortest with equal probability). Vitold Belevitch in a paper, On the Statistical Laws of Linguistic Distribution offered a mathematical derivation. He took a large class of well-behaved statistical distributions (not only the normal distribution) and expressed them in terms of rank. He then expanded each expression into a Taylor series. In every case Belevitch obtained the remarkable result that a first-order truncation of the series resulted in Zipf's law. Further, a second-order truncation of the Taylor series resulted in Mandelbrot's law.
+</div>
+
+</body>
+</html>
