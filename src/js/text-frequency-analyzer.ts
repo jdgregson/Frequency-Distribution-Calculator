@@ -1,20 +1,18 @@
 const LOCAL_STORAGE_KEY = 'FrequencyAnalyzerOptions';
 
+interface Window {
+  userInteractive: boolean;
+  firstLoadTooltipTimer: any;
+}
+
 /**
  * Returns the ordinal suffix of a given number (e.g. "rd", "th").
- * @param {number} int A number to return the ordinal suffix of.
+ * @param {number} Num A number to return the ordinal suffix of.
  * @return {string} The ordinal suffix of the given number.
  */
-const getOrdinal = (int) => {
-  if (typeof int !== 'number') {
-    try {
-      int = parseInt(int);
-    } catch {
-      throw 'Argument must be an integer.';
-    }
-  }
-  const lastDigit = int % 10;
-  const lastTwoDigits = int % 100;
+const getOrdinal = (num: number) => {
+  const lastDigit = num % 10;
+  const lastTwoDigits = num % 100;
   if (lastDigit === 1 && lastTwoDigits !== 11) {
     return 'st';
   }
@@ -33,7 +31,7 @@ const getOrdinal = (int) => {
  * @param {string} string The string to remove punctuation from.
  * @return {string} The given string without punctuation.
  */
-const removePunctuation = (string) => {
+const removePunctuation = (string: string) => {
   const splitText = string.split('');
   for (let i = 0; i < splitText.length; i++) {
     if (!splitText[i].match(/\w|'/)) {
@@ -54,7 +52,7 @@ const removePunctuation = (string) => {
  * @return {float} Width the given string would be on the page with the given
  *     CSS classes applied in pixels.
  */
-const getTextWidth = (string, cssClass = '') => {
+const getTextWidth = (string: string, cssClass = '') => {
   const span = document.createElement('span');
   span.setAttribute('class', `text-width${cssClass ? ' ' + cssClass : ''}`);
   span.innerText = string;
@@ -76,11 +74,11 @@ const getTextWidth = (string, cssClass = '') => {
  *    ['foo', 6.4594, 'bar', 8.9378]
  *  ];
  *
- * @param {[type]} array [description]
- * @param {[type]} index [description]
- * @return {[type]} [description]
+ * @param {array} array The 2D array to be sorted.
+ * @param {number} index The column index to sort the 2D array by.
+ * @return {array} The 2D array sorted by the column defined by index.
  */
-const sort2DArrayByIndex = (array, index) => {
+const sort2DArrayByIndex = (array: any[], index: number) => {
   for (let i = 0; i < array.length; i++) {
     for (let j = 0; j < array.length; j++) {
       if (array[i][index] > array[j][index]) {
@@ -97,14 +95,14 @@ const sort2DArrayByIndex = (array, index) => {
  * @param {object} element A DOM object to check the visibility of.
  * @return {boolean} Whether or not the given element is visible to the user.
  */
-const isVisible = (element) => {
+const isVisible = (element: HTMLElement) => {
   if (!(element instanceof Element)) {
     throw Error('DomUtil: element is not an element.');
   }
   const style = getComputedStyle(element);
   if (style.display === 'none') return false;
   if (style.visibility !== 'visible') return false;
-  if (style.opacity < 0.1) return false;
+  if (parseInt(style.opacity) < 0.1) return false;
   if (element.offsetWidth + element.offsetHeight +
       element.getBoundingClientRect().height +
       element.getBoundingClientRect().width === 0) {
@@ -120,14 +118,16 @@ const isVisible = (element) => {
   if (elemCenter.x > windowWidth) return false;
   if (elemCenter.y > windowWidth) return false;
   let pointContainer = document.elementFromPoint(elemCenter.x, elemCenter.y);
-  do {
-    if (pointContainer === element) return true;
-  } while (pointContainer = pointContainer.parentNode || false);
+  if (pointContainer) {
+    do {
+      if (pointContainer === element) return true;
+    } while (pointContainer = pointContainer.parentNode as HTMLElement);
+  }
   return false;
 };
 
 // https://stackoverflow.com/a/14966131
-const downloadCSVData = (data) => {
+const downloadCSVData = (data: string) => {
   const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${data}`);
   const link = document.createElement('a');
   link.setAttribute('href', encodedUri);
@@ -142,8 +142,9 @@ const downloadOutput = () => {
   const occr = document.querySelectorAll('.fd-row-number');
   const word = document.querySelectorAll('.fd-row-text');
   for (let i = 0; i < freq.length; i++) {
-    let w = word[i].innerText.trim();
-    output += `"${freq[i].innerText}",${occr[i].innerText},"${w}"\r\n`;
+    let w = (word[i] as HTMLElement).innerText.trim();
+    output += `"${(freq[i] as HTMLElement).innerText}",` +
+      `${(occr[i] as HTMLElement).innerText},"${w}"\r\n`;
   }
   downloadCSVData(output);
 };
@@ -174,14 +175,14 @@ const updateHLIndicator = () => {
   }
   const hlWraps = document.getElementsByClassName('hapax-legomenon-wrap');
   for (let i = 0; i < hlWraps.length; i++) {
-    if (isVisible(hlWraps[i])) {
+    if (isVisible(hlWraps[i] as HTMLElement)) {
       hlWraps[i].classList.add('hl-visible');
       break;
     }
   }
 };
 
-const getHLPercent = (frequencyAnalysis) => {
+const getHLPercent = (frequencyAnalysis: any[]) => {
   let hlCount = 0;
   frequencyAnalysis.forEach((a, i) => {
     hlCount += frequencyAnalysis[i][0] === 1 ? 1 : 0;
@@ -214,12 +215,13 @@ const showHLToast = () => {
  * @param {string} string A string to estimate the entropy of.
  * @return {float} An estimation of the entropy of the given string.
  */
-const estimateEntropy = (string) => {
-  const set = {};
+const estimateEntropy = (string: string) => {
+  const set: any = {};
 
-  string.split('').forEach(
-    c => (set[c] ? set[c]++ : (set[c] = 1))
-  );
+  string.split('').forEach((c: string) => {
+    const _c = parseInt(c);
+    (set[_c] ? set[_c]++ : (set[_c] = 1));
+  });
 
   return Object.keys(set).reduce((acc, c) => {
     const p = set[c] / string.length;
@@ -227,7 +229,7 @@ const estimateEntropy = (string) => {
   }, 0);
 };
 
-const getZipfianAnalysis = (frequencyAnalysis) => {
+const getZipfianAnalysis = (frequencyAnalysis: any[]) => {
   const firstCount = frequencyAnalysis[0][0];
   const faLength = frequencyAnalysis.length;
   let zipfianScore = 0;
@@ -245,7 +247,7 @@ const getZipfianAnalysis = (frequencyAnalysis) => {
       zipfianScore += 1;
     } else if (expectedZipfianCount > (actualCount - thirtyPercent) &&
         expectedZipfianCount < (actualCount + thirtyPercent)) {
-      // pass
+      continue;
     } else {
       zipfianScore -= 1;
     }
@@ -261,8 +263,11 @@ const getZipfianAnalysis = (frequencyAnalysis) => {
 };
 
 const drawZipfSvg = () => {
-  const tableRect = document.getElementById(
-      'output-wrap').getBoundingClientRect();
+  const outputWrap = document.getElementById('output-wrap');
+  if (!outputWrap) {
+    return
+  };
+  const tableRect = outputWrap.getBoundingClientRect();
   const svgOffsetX = tableRect.left + window.pageXOffset;
   const svgOffsetY = tableRect.top + window.pageYOffset;
   const svgWrap = document.getElementById('zipf-svg-wrap');
@@ -309,7 +314,8 @@ const drawZipfSvg = () => {
   }
 };
 
-const getInsightGagues = (entropy, hlPercent, looksZipfian) => {
+const getInsightGagues = (entropy: number, hlPercent: number,
+    looksZipfian: string) => {
   let entropyTitle = '?';
   let entropyColor = 'gray';
   let contentGuess = 'SOMETHING BORING';
@@ -359,7 +365,7 @@ const getInsightGagues = (entropy, hlPercent, looksZipfian) => {
   };
 };
 
-const drawTextInsights = (frequencyAnalysis, originalText) => {
+const drawTextInsights = (frequencyAnalysis: any[], originalText: string) => {
   const outerWrap = document.getElementById('insights-wrap');
   const innerWrap = document.createElement('div');
   const wordCount = ((originalText.replace(/[ \n]+/g, ' ')).split(' ')).length;
@@ -411,45 +417,80 @@ const drawTextInsights = (frequencyAnalysis, originalText) => {
     <div>
   `;
 
-  outerWrap.innerHTML = '';
-  outerWrap.appendChild(innerWrap);
-  bindInsightToasts();
+  if (outerWrap) {
+    outerWrap.innerHTML = '';
+    outerWrap.appendChild(innerWrap);
+    bindInsightToasts();
+  }
 }
 
 const bindInsightToasts = () => {
-  document.getElementById('entropy-title').addEventListener('click', (e) => {
-    const entropy = e.target.nextElementSibling.children[0].getAttribute(
-        'entropy');
-    showToast(`Entropy: ${parseFloat(entropy).toFixed(3)}/8`, 7000);
-  });
-  document.getElementById('hl-percent-title').addEventListener('click', (e) => {
-    const percent = e.target.nextElementSibling.innerText;
-    const words = options.wordSplit ? 'words' : 'characters';
-    showToast(`HL percent: about ${percent} of the ${words} in this text are ` +
-        `<span id="hl-toast" class="toasted">hapax legomena.</a>`, 7000, true);
-    document.getElementById('hl-toast').addEventListener('click', (e) => {
-      showHLToast();
+  const entropyTitle = document.getElementById('entropy-title');
+  if (entropyTitle) {
+    entropyTitle.addEventListener('click', (e: Event) => {
+      const target = e.target as HTMLElement;
+      if (target && target.nextElementSibling) {
+        const entropyGague = target.nextElementSibling.children[0];
+        const entropy = entropyGague.getAttribute('entropy');
+        if (entropy) {
+          showToast(`Entropy: ${parseFloat(entropy).toFixed(3)}/8`, 7000);
+        }
+      }
     });
-  });
-  document.getElementById('zipfian-title').addEventListener('click', (e) => {
-    const zipfianDiagnosis = e.target.nextElementSibling.innerText;
-    let url = 'https://en.wikipedia.org/wiki/Zipf%27s_law';
-    let toastText = `<a href="${url}" target="_blank">Zipf\'s Law.</a>`;
-    if (zipfianDiagnosis === 'NO') {
-      toastText = `This text does not follow ${toastText}`;
-    } else if (zipfianDiagnosis === 'ISH') {
-      toastText = `This text loosely follows ${toastText}`;
-    } else if (zipfianDiagnosis === 'YES') {
-      toastText = `This text follows ${toastText}`;
-    }
-    showToast(toastText, 7000, true);
-  });
+  }
+
+  const hlPercentTitle = document.getElementById('hl-percent-title');
+  if (hlPercentTitle) {
+    hlPercentTitle.addEventListener('click', (e: Event) => {
+      const target = e.target as HTMLElement;
+      if (target && target.nextElementSibling) {
+        const percentGague = target.nextElementSibling.children[0];
+        const percent = (percentGague as HTMLElement).innerText;
+        const words = stardust.options.wordSplit ? 'words' : 'characters';
+        showToast(`HL percent: about ${percent} of the ${words} in this text ` +
+          `are <span id="hl-toast" class="toasted">hapax legomena.</a>`,
+          7000, true
+        );
+        const hlToast = document.getElementById('hl-toast');
+        if (hlToast) {
+          hlToast.addEventListener('click', (e) => {
+            showHLToast();
+          });
+        }
+      }
+    });
+  }
+
+  const zipfianTitle = document.getElementById('zipfian-title');
+  if (zipfianTitle) {
+    zipfianTitle.addEventListener('click', (e: Event) => {
+      const target = e.target as HTMLElement;
+      if (target && target.nextElementSibling) {
+        const zipfianGague = target.nextElementSibling.children[0];
+        const zipfianDiagnosis = (zipfianGague as HTMLElement).innerText;
+        let url = 'https://en.wikipedia.org/wiki/Zipf%27s_law';
+        let toastText = `<a href="${url}" target="_blank">Zipf\'s Law.</a>`;
+        if (zipfianDiagnosis === 'NO') {
+          toastText = `This text does not follow ${toastText}`;
+        } else if (zipfianDiagnosis === 'ISH') {
+          toastText = `This text loosely follows ${toastText}`;
+        } else if (zipfianDiagnosis === 'YES') {
+          toastText = `This text follows ${toastText}`;
+        }
+        showToast(toastText, 7000, true);
+
+      }
+    });
+  }
 };
 
 const bindOutputButtons = () => {
-  document.getElementById('save-button-wrap').addEventListener('click', () => {
-    downloadOutput();
-  });
+  const saveButtonWrap = document.getElementById('save-button-wrap');
+  if (saveButtonWrap) {
+    saveButtonWrap.addEventListener('click', () => {
+      downloadOutput();
+    });
+  }
 };
 
 
@@ -460,54 +501,67 @@ const bindOutputButtons = () => {
  * insights, and rendering them on the page while minimizing repaint blocking.
  */
 const analyzeTextFrequency = () => {
-  let inputText = document.getElementById('input-textarea').value;
-  const outputWrap = document.getElementById('output-wrap');
-  document.getElementById('insights-wrap').innerHTML = '';
-  outputWrap.innerHTML = '';
-  if (inputText) {
-    updateLoadingBar(10);
-    self.setTimeout(() => {
-      if (options.removePunctuation) {
-        inputText = removePunctuation(inputText);
-      }
-      updateLoadingBar(20);
+  let inputTextarea = document.getElementById('input-textarea');
+  if (inputTextarea) {
+    let inputText = (inputTextarea as HTMLTextAreaElement).value;
+    const insightsWrap = document.getElementById('insights-wrap');
+    if (insightsWrap) {
+      insightsWrap.innerHTML = '';
+    }
+    const outputWrap = document.getElementById('output-wrap');
+    if (outputWrap) {
+      outputWrap.innerHTML = '';
+    }
+    if (inputText) {
+      updateLoadingBar(10);
       self.setTimeout(() => {
-        const frequencyAnalysis = getFrequencyDistribution(inputText);
-        updateLoadingBar(40);
+        if (stardust.options.removePunctuation) {
+          inputText = removePunctuation(inputText);
+        }
+        updateLoadingBar(20);
         self.setTimeout(() => {
-          drawTextInsights(frequencyAnalysis, inputText);
-        }, 0);
-        self.setTimeout(() => {
-          drawDistributionTable(frequencyAnalysis);
-          updateLoadingBar(80);
-          if (options.showZipfLine) {
-            self.setTimeout(() => {
-              drawZipfSvg();
+          const frequencyAnalysis = getFrequencyDistribution(inputText);
+          updateLoadingBar(40);
+          self.setTimeout(() => {
+            drawTextInsights(frequencyAnalysis, inputText);
+          }, 0);
+          self.setTimeout(() => {
+            drawDistributionTable(frequencyAnalysis);
+            updateLoadingBar(80);
+            if (stardust.options.showZipfLine) {
+              self.setTimeout(() => {
+                drawZipfSvg();
+                updateLoadingBar(100);
+                self.setTimeout(() => {
+                  resetLoadingBar();
+                }, 1000);
+                window.addEventListener('resize', () => {
+                  drawZipfSvg();
+                });
+                if (outputWrap) {
+                  outputWrap.addEventListener('scroll', (e) => {
+                    drawZipfSvg();
+                  });
+                }
+              }, 0);
+            } else {
               updateLoadingBar(100);
               self.setTimeout(() => {
                 resetLoadingBar();
               }, 1000);
-              window.addEventListener('resize', () => {
-                drawZipfSvg();
-              });
-              outputWrap.addEventListener('scroll', (e) => {
-                drawZipfSvg();
-              });
-            }, 0);
-          } else {
-            updateLoadingBar(100);
-            self.setTimeout(() => {
-              resetLoadingBar();
-            }, 1000);
-          }
+            }
+          }, 0);
         }, 0);
       }, 0);
-    }, 0);
+    }
   }
 };
 
-const drawDistributionTable = (frequencyAnalysis) => {
+const drawDistributionTable = (frequencyAnalysis: any[]) => {
   const outputTarget = document.getElementById('output-wrap');
+  if (!outputTarget) {
+    return;
+  }
   let output = [];
   let highest = frequencyAnalysis[0][0];
   for (let i = 0; i < frequencyAnalysis.length; i++) {
@@ -546,7 +600,8 @@ const drawDistributionTable = (frequencyAnalysis) => {
           <span class="fd-row-text-word">${word}</span>
           <div class="zipf-line-node" style="${zipfCss}"></div>
         </td>
-      </tr>${last ? '<tr><td></td><td></td><td></td><td></td></tr>' : ''}`);
+      </tr>${last ? '<tr><td></td><td></td><td></td><td></td></tr>' : ''}`
+    );
   }
   const saveButtonSVG = `
     <svg id="save-button-svg">
@@ -565,7 +620,8 @@ const drawDistributionTable = (frequencyAnalysis) => {
         <td class="fd-row-number-ordinal-heading">FREQUENCY</td>
         <td class="fd-row-number-heading">OCCURANCES</td>
         <td class="fd-row-spacer-heading"></td>
-        <td class="fd-row-text-heading">${options.wordSplit ? 'WORD' : 'CHARACTER'}
+        <td class="fd-row-text-heading">${stardust.options.wordSplit ?
+            'WORD' : 'CHARACTER'}
           <span id="save-button-wrap">${saveButtonSVG} SAVE</span>
         </td>
       </tr>
@@ -575,7 +631,8 @@ const drawDistributionTable = (frequencyAnalysis) => {
         <td></td>
         <td></td>
       </tr>
-      ${options.sortDescending ? output.join('') : output.reverse().join('')}
+      ${stardust.options.sortDescending ?
+          output.join('') : output.reverse().join('')}
     </table>
     <div id="zipf-svg-wrap"></div>`;
     bindHLIndicators();
@@ -612,21 +669,21 @@ const drawDistributionTable = (frequencyAnalysis) => {
  * @param {object} options An options object.
  * @return {array} A 2D array containing the distribution frequency analysis.
  */
-const getFrequencyDistribution = (inputText, options = {}) => {
+const getFrequencyDistribution = (inputText: string, options: any = {}) => {
   if (typeof options.wordSplit === 'undefined') {
-    options.wordSplit = window.options.wordSplit;
+    options.wordSplit = stardust.options.wordSplit;
   }
   if (typeof options.ignoreCase === 'undefined') {
-    options.ignoreCase = window.options.ignoreCase;
+    options.ignoreCase = stardust.options.ignoreCase;
   }
   if (typeof options.removeSpace === 'undefined') {
-    options.removeSpace = window.options.removeSpace;
+    options.removeSpace = stardust.options.removeSpace;
   }
 
   inputText = inputText.replace(/\n/g, ' ');
   inputText = options.removeSpace ? inputText.replace(/ /g, '') : inputText;
   const inputWords = inputText.split(options.wordSplit ? ' ' : '');
-  const frequencyAnalysis = {};
+  const frequencyAnalysis: any = {};
   for (let i = 0; i < inputWords.length; i++) {
     let word = inputWords[i];
     word = options.ignoreCase ? word.toLowerCase() : word;
@@ -662,7 +719,7 @@ const initFirstLoadToolitp = () => {
     if (!window.userInteractive) {
       const offsetX = 25;
       const offsetY = 15;
-      const button = document.getElementById('demo-button');
+      const button = document.getElementById('demo-button') as HTMLButtonElement;
       const rect = button.getBoundingClientRect();
       showTipOrb((rect.x || rect.left) + window.pageXOffset + offsetX,
           (rect.y || rect.top) + window.pageYOffset + offsetY);
@@ -680,7 +737,7 @@ const initFirstLoadToolitp = () => {
  * Bootstraps the application.
  */
 const initTextFrequencyAnalyzer = () => {
-  if (options.isFirstLoad) {
+  if (stardust.options.isFirstLoad) {
     initFirstLoadToolitp();
   }
 
@@ -688,7 +745,10 @@ const initTextFrequencyAnalyzer = () => {
     updateHLIndicator();
   });
 
-  document.getElementById('analyze-button').addEventListener('click', () => {
-    analyzeTextFrequency();
-  });
+  const analyzeButton = document.getElementById('analyze-button');
+  if (analyzeButton) {
+    analyzeButton.addEventListener('click', () => {
+      analyzeTextFrequency();
+    });
+  }
 };

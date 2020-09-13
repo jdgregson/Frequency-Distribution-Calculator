@@ -1,13 +1,13 @@
 const toggleBodyText = () => {
-  if (options.hideBodyText) {
+  if (stardust.options.hideBodyText) {
     document.body.classList.add('no-text');
-    options.hideBodyText = true;
+    stardust.options.hideBodyText = true;
   } else {
     document.body.classList.remove('no-text');
-    options.hideBodyText = false;
+    stardust.options.hideBodyText = false;
   }
   saveOptions();
-  if (options.showZipfLine) {
+  if (stardust.options.showZipfLine) {
     drawZipfSvg();
   }
 };
@@ -30,13 +30,21 @@ window.addEventListener('load', () => {
   });
   initTextFrequencyAnalyzer();
 
-  if (options.hideBodyText) {
+  if (stardust.options.hideBodyText) {
     document.body.classList.add('no-text');
   }
 
-  document.getElementById('demo-button').addEventListener('click', (e) => {
-    const demoText = document.getElementById('demo-text').innerHTML;
-    document.getElementById('input-textarea').value = demoText;
-    analyzeTextFrequency();
-  });
+  const demoButton = document.getElementById('demo-button');
+  if (demoButton) {
+    demoButton.addEventListener('click', (e) => {
+      const demoText = document.getElementById('demo-text');
+      if (demoText) {
+        const input = document.getElementById('input-textarea');
+        if (input) {
+          (input as HTMLTextAreaElement).value = demoText.innerText;
+          analyzeTextFrequency();
+        }
+      }
+    });
+  }
 });

@@ -7,6 +7,7 @@
   <meta name="description" content="Frequency Distribution Calculator is a tool to calculate word and letter frequency in text. Useful for calculating word frequency distribution, letter frequency distribution, and character frequency distribution."/>
   <meta name="robots" content="index, follow"/>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap" rel="stylesheet">
+  <link href="lib/stardust/css/stardust-preload.css" rel="stylesheet">
   <script src="js/text-frequency-analyzer.js"></script>
   <script src="lib/stardust/js/stardust.js"></script>
   <script src="js/app.js"></script>
@@ -23,7 +24,15 @@
 </head>
 <body>
 
-<div id="header" class="card card-1">
+<div id="splash-wrap">
+  <div id="splash-inner" style="display: none;">
+    <div id="splash-title">Stardust</div>
+    <div id="splash-text">loading 🤞</div>
+  </div>
+</div>
+<script>if(typeof localStorage!=='undefined'){var sdPrimaryColor=localStorage.getItem('stardust-primary-color');if(sdPrimaryColor){document.getElementById('splash-wrap').style.backgroundColor=sdPrimaryColor;}}</script>
+
+<div id="header">
   <div id="header-inner">
     <div id="header-back-wrap" style="right: 100%;">
       <svg id="header-back-svg">
@@ -66,29 +75,29 @@
         <div id="options-inner-wrap">
           <div class="option-wrap">
             <label for="wordSplit">Analyze</label>
-            <select bindOption="wordSplit" id="wordSplit" name="wordSplit">
+            <select bind-option="wordSplit" id="wordSplit" name="wordSplit">
               <option value="true">Words</option>
               <option value="false">Characters</option>
             </select>
           </div>
           <div class="option-wrap">
-            <input type="checkbox" id="removePunctuation" bindOption="removePunctuation"/>
+            <input type="checkbox" id="removePunctuation" bind-option="removePunctuation"/>
             <label for="removePunctuation">Remove punctuation</label>
           </div>
           <div class="option-wrap">
-            <input type="checkbox" id="removeSpace" bindOption="removeSpace"/>
+            <input type="checkbox" id="removeSpace" bind-option="removeSpace"/>
             <label for="removeSpace">Remove spaces</label>
           </div>
           <div class="option-wrap">
-            <input type="checkbox" id="ignoreCase" bindOption="ignoreCase"/>
+            <input type="checkbox" id="ignoreCase" bind-option="ignoreCase"/>
             <label for="ignoreCase">Ignore case</label>
           </div>
           <div class="option-wrap">
-            <input type="checkbox" id="showZipfLine" bindOption="showZipfLine"/>
+            <input type="checkbox" id="showZipfLine" bind-option="showZipfLine"/>
             <label for="showZipfLine">Show Zipf line</label>
           </div>
           <div class="option-wrap">
-            <input type="checkbox" id="sortDescending" bindOption="sortDescending"/>
+            <input type="checkbox" id="sortDescending" bind-option="sortDescending"/>
             <label for="sortDescending">Sort descending</label>
           </div>
         </div>
@@ -142,18 +151,18 @@
       <div class="side-menu-row">
         <span class="side-menu-text">Theme</span>
         <div class="side-menu-action">
-          <select bindOption="theme" bindAction="change:applyTheme">
+          <select bind-option="theme" bind-action="change:applyTheme">
             <option value="dark">DARK</option>
             <option value="light">LIGHT</option>
           </select>
         </div>
       </div>
       <div class="side-menu-row">
-        <input type="checkbox" bindAction="change:toggleBodyText" bindOption="hideBodyText" name="hideBodyText" id="hideBodyText" class="large"/>
+        <input type="checkbox" bind-action="change:toggleBodyText" bind-option="hideBodyText" name="hideBodyText" id="hideBodyText" class="large"/>
         <label for="hideBodyText">Hide body text</label>
       </div>
       <div class="side-menu-row">
-        <input type="checkbox" bindOption="hideAds" name="hideAds" id="hideAds" class="large"/>
+        <input type="checkbox" bind-option="hideAds" name="hideAds" id="hideAds" class="large"/>
         <label for="hideAds">Hide ads</label>
       </div>
       <div class="side-menu-row" onclick="resetOptions()">Reset settings</div>
