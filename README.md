@@ -1,12 +1,14 @@
-# Stardust
-Stardust is a lightweight web application framework.
+# Frequency Distribution Calculator
+Frequency Distribution Calculator is a tool to help you calculate and analyze word and character frequency distribution in text.
 
-## What is this for?
-It's for me. You can use it if you want to.
+## Demo
+You can try out the demo on [frequencydistributioncalculator.com/](https://frequencydistributioncalculator.com/).
 
 ## Features
-- TypeScript support
-- SCSS support
-- Build scripts for TypeScript, SCSS, and coping files
-- Small CSS library
-- Small JavaScrpt library
+Frequency Distribution Calculator has may features, including:
+ - Word or character frequency analysis
+ - Word count
+ - Character count
+ - Entropy estimation
+ - Hapax Legomena highlighting
+ - Saving results as CSV
