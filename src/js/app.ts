@@ -18,7 +18,7 @@ window.addEventListener('load', () => {
       'toggleBodyText': toggleBodyText
     },
     'options': {
-      'hideAds': false,
+      'hideAds': true,
       'wordSplit': true,
       'ignoreCase': true,
       'removeSpace': false,

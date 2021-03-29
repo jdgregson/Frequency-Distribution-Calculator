@@ -19,7 +19,7 @@ window.addEventListener('load', function () {
             'toggleBodyText': toggleBodyText
         },
         'options': {
-            'hideAds': false,
+            'hideAds': true,
             'wordSplit': true,
             'ignoreCase': true,
             'removeSpace': false,
