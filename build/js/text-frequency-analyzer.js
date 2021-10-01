@@ -98,9 +98,11 @@ var isVisible = function (element) {
         return false;
     if (parseInt(style.opacity) < 0.1)
         return false;
-    if (element.offsetWidth + element.offsetHeight +
+    if (element.offsetWidth +
+        element.offsetHeight +
         element.getBoundingClientRect().height +
-        element.getBoundingClientRect().width === 0) {
+        element.getBoundingClientRect().width ===
+        0) {
         return false;
     }
     var windowWidth = document.documentElement.clientHeight || window.innerHeight;
@@ -121,7 +123,7 @@ var isVisible = function (element) {
         do {
             if (pointContainer === element)
                 return true;
-        } while (pointContainer = pointContainer.parentNode);
+        } while ((pointContainer = pointContainer.parentNode));
     }
     return false;
 };
@@ -141,8 +143,9 @@ var downloadOutput = function () {
     var word = document.querySelectorAll('.fd-row-text');
     for (var i = 0; i < freq.length; i++) {
         var w = word[i].innerText.trim();
-        output += "\"" + freq[i].innerText + "\"," +
-            (occr[i].innerText + ",\"" + w + "\"\r\n");
+        output +=
+            "\"" + freq[i].innerText + "\"," +
+                (occr[i].innerText + ",\"" + w + "\"\r\n");
     }
     downloadCSVData(output);
 };
@@ -180,12 +183,12 @@ var getHLPercent = function (frequencyAnalysis) {
     frequencyAnalysis.forEach(function (a, i) {
         hlCount += frequencyAnalysis[i][0] === 1 ? 1 : 0;
     });
-    return Math.floor(hlCount / frequencyAnalysis.length * 100);
+    return Math.floor((hlCount / frequencyAnalysis.length) * 100);
 };
 var showHLToast = function () {
     var fmt = [
         'https://youtu.be/fCn8zs912OE?t=1014',
-        'https://youtu.be/fCn8zs912OE'
+        'https://youtu.be/fCn8zs912OE',
     ];
     showToast('Hapax Legomenon: a word that appears only once in a given body ' +
         'or collection of text. See: ' +
@@ -208,11 +211,11 @@ var estimateEntropy = function (string) {
     var set = {};
     string.split('').forEach(function (c) {
         var _c = parseInt(c);
-        (set[_c] ? set[_c]++ : (set[_c] = 1));
+        set[_c] ? set[_c]++ : (set[_c] = 1);
     });
     return Object.keys(set).reduce(function (acc, c) {
         var p = set[c] / string.length;
-        return acc - (p * (Math.log(p) / Math.log(2)));
+        return acc - p * (Math.log(p) / Math.log(2));
     }, 0);
 };
 var getZipfianAnalysis = function (frequencyAnalysis) {
@@ -222,19 +225,19 @@ var getZipfianAnalysis = function (frequencyAnalysis) {
     for (var i = 1; i < (faLength > 20 ? 20 : faLength); i++) {
         var expectedZipfianCount = firstCount / i;
         var actualCount = frequencyAnalysis[i - 1][0];
-        var fivePercent = 5 * actualCount / 100;
-        var twentyPercent = 20 * actualCount / 100;
-        var thirtyPercent = 30 * actualCount / 100;
-        if (expectedZipfianCount > (actualCount - fivePercent) &&
-            expectedZipfianCount < (actualCount + fivePercent)) {
+        var fivePercent = (5 * actualCount) / 100;
+        var twentyPercent = (20 * actualCount) / 100;
+        var thirtyPercent = (30 * actualCount) / 100;
+        if (expectedZipfianCount > actualCount - fivePercent &&
+            expectedZipfianCount < actualCount + fivePercent) {
             zipfianScore += 2;
         }
-        else if (expectedZipfianCount > (actualCount - twentyPercent) &&
-            expectedZipfianCount < (actualCount + twentyPercent)) {
+        else if (expectedZipfianCount > actualCount - twentyPercent &&
+            expectedZipfianCount < actualCount + twentyPercent) {
             zipfianScore += 1;
         }
-        else if (expectedZipfianCount > (actualCount - thirtyPercent) &&
-            expectedZipfianCount < (actualCount + thirtyPercent)) {
+        else if (expectedZipfianCount > actualCount - thirtyPercent &&
+            expectedZipfianCount < actualCount + thirtyPercent) {
             continue;
         }
         else {
@@ -256,7 +259,6 @@ var drawZipfSvg = function () {
     if (!outputWrap) {
         return;
     }
-    ;
     var tableRect = outputWrap.getBoundingClientRect();
     var svgOffsetX = tableRect.left + window.pageXOffset;
     var svgOffsetY = tableRect.top + window.pageYOffset;
@@ -277,8 +279,8 @@ var drawZipfSvg = function () {
         var pathData = '';
         for (var i = 0; i < zipfLineNodes.length; i++) {
             var nodeRect = zipfLineNodes[i].getBoundingClientRect();
-            var pointX = ((nodeRect.x || nodeRect.left) + window.pageXOffset) - (svgOffsetX);
-            var pointY = ((nodeRect.y || nodeRect.top) + window.pageYOffset) - (svgOffsetY);
+            var pointX = (nodeRect.x || nodeRect.left) + window.pageXOffset - svgOffsetX;
+            var pointY = (nodeRect.y || nodeRect.top) + window.pageYOffset - svgOffsetY;
             if (i === 0) {
                 pathData += "M" + pointX + "," + pointY + "L" + pointX + "," + pointY;
                 path.setAttribute('d', pathData);
@@ -328,17 +330,17 @@ var getInsightGagues = function (entropy, hlPercent, looksZipfian) {
         contentGuess = 'ENCRYPTED OR COMPRESSED';
     }
     return {
-        'entropyGague': "\n      <span id=\"entropy-gague\" style=\"color: " + entropyColor + ";\" " +
+        entropyGague: "\n      <span id=\"entropy-gague\" style=\"color: " + entropyColor + ";\" " +
             ("title=\"Entropy: " + entropy + "\" entropy=\"" + entropy + "\">\n        " + entropyTitle + "\n      </span>\n    "),
-        'contentGuessGague': "\n      <span id=\"content-guess-gague\" title=\"Content guess: " + contentGuess + "\">\n        " + contentGuess + "\n      </span>\n    ",
-        'hlPercentGague': "\n      <span id=\"hl-percent-gague\" title=\"HL percent: " + hlPercent + "%\">\n        " + hlPercent + "%\n      </span>\n    ",
-        'zipfianGague': "\n      <span id=\"zipfian-gague\" title=\"Looks zipfian: " + looksZipfian + "%\">\n        " + looksZipfian + "\n      </span>\n    "
+        contentGuessGague: "\n      <span id=\"content-guess-gague\" title=\"Content guess: " + contentGuess + "\">\n        " + contentGuess + "\n      </span>\n    ",
+        hlPercentGague: "\n      <span id=\"hl-percent-gague\" title=\"HL percent: " + hlPercent + "%\">\n        " + hlPercent + "%\n      </span>\n    ",
+        zipfianGague: "\n      <span id=\"zipfian-gague\" title=\"Looks zipfian: " + looksZipfian + "%\">\n        " + looksZipfian + "\n      </span>\n    "
     };
 };
 var drawTextInsights = function (frequencyAnalysis, originalText) {
     var outerWrap = document.getElementById('insights-wrap');
     var innerWrap = document.createElement('div');
-    var wordCount = ((originalText.replace(/[ \n]+/g, ' ')).split(' ')).length;
+    var wordCount = originalText.replace(/[ \n]+/g, ' ').split(' ').length;
     var charCount = originalText.length;
     var entropy = estimateEntropy(originalText);
     var gagues = getInsightGagues(entropy, getHLPercent(frequencyAnalysis), getZipfianAnalysis(frequencyAnalysis));
@@ -493,11 +495,11 @@ var drawDistributionTable = function (frequencyAnalysis) {
         var word = "&nbsp;" + sanitizeString(frequencyAnalysis[i][1]);
         var textWidth = getTextWidth(word + ".", 'fd-row-text');
         var zipfPercent = highest / (i + 1);
-        var zipfCss = "left: " + zipfPercent * 100 / highest + "%;";
-        var last = i === (frequencyAnalysis.length - 1) ? ' last' : '';
+        var zipfCss = "left: " + (zipfPercent * 100) / highest + "%;";
+        var last = i === frequencyAnalysis.length - 1 ? ' last' : '';
         var percent = 100;
         if (count !== highest) {
-            percent = count * 100 / highest;
+            percent = (count * 100) / highest;
         }
         if (percent < 0.155) {
             percent = 0.155;
@@ -512,9 +514,9 @@ var drawDistributionTable = function (frequencyAnalysis) {
         output.push("\n      <tr class=\"fd-row" + last + "\">\n        <td class=\"fd-row-number-ordinal-wrap\">\n          <span class=\"fd-row-number-ordinal\">" + (i + 1) + getOrdinal(i + 1) + "</span>\n        </td>\n        <td class=\"fd-row-number" + (count == 1 ? ' hapax-legomenon-wrap' : '') + "\">\n          <span class=\"" + (count == 1 ? 'hapax-legomenon-indicator' : '') + "\"></span>" + count + "\n        </td>\n        <td class=\"fd-row-spacer\"></td>\n        <td class=\"fd-row-text\" style=\"" + css + "\" textwidth=\"" + textWidth + "\">\n          <span class=\"fd-row-text-word\">" + word + "</span>\n          <div class=\"zipf-line-node\" style=\"" + zipfCss + "\"></div>\n        </td>\n      </tr>" + (last ? '<tr><td></td><td></td><td></td><td></td></tr>' : ''));
     }
     var saveButtonSVG = "\n    <svg id=\"save-button-svg\">\n      <g>\n        <path d=\"M10.467,3.86l-2.558,-2.327l-6.376,0l0,8.934l8.934,0l0,-6.607Z\"\n            style=\"fill:none;stroke-width:0.5px;\"/>\n        <path d=\"M4.177,1.533l0,3.567l3.427,0l0,-3.567\"\n            style=\"fill:none;stroke-width:0.5px;\"/>\n        <rect x=\"2.292\" y=\"7.09\" width=\"7.416\" height=\"2.613\"\n            style=\"fill:none;stroke-width:0.5px;\"/>\n      </g>\n    </svg>";
-    outputTarget.innerHTML = "\n    <table id=\"output\" class=\"card card-2\">\n      <tr>\n        <td class=\"fd-row-number-ordinal-heading\">FREQUENCY</td>\n        <td class=\"fd-row-number-heading\">OCCURANCES</td>\n        <td class=\"fd-row-spacer-heading\"></td>\n        <td class=\"fd-row-text-heading\">" + (stardust.options.wordSplit ?
-        'WORD' : 'CHARACTER') + "\n          <span id=\"save-button-wrap\">" + saveButtonSVG + " SAVE</span>\n        </td>\n      </tr>\n      <tr>\n        <td></td>\n        <td></td>\n        <td></td>\n        <td></td>\n      </tr>\n      " + (stardust.options.sortDescending ?
-        output.join('') : output.reverse().join('')) + "\n    </table>\n    <div id=\"zipf-svg-wrap\"></div>";
+    outputTarget.innerHTML = "\n    <table id=\"output\" class=\"card card-2\">\n      <tr>\n        <td class=\"fd-row-number-ordinal-heading\">FREQUENCY</td>\n        <td class=\"fd-row-number-heading\">OCCURANCES</td>\n        <td class=\"fd-row-spacer-heading\"></td>\n        <td class=\"fd-row-text-heading\">" + (stardust.options.wordSplit ? 'WORD' : 'CHARACTER') + "\n          <span id=\"save-button-wrap\">" + saveButtonSVG + " SAVE</span>\n        </td>\n      </tr>\n      <tr>\n        <td></td>\n        <td></td>\n        <td></td>\n        <td></td>\n      </tr>\n      " + (stardust.options.sortDescending
+        ? output.join('')
+        : output.reverse().join('')) + "\n    </table>\n    <div id=\"zipf-svg-wrap\"></div>";
     bindHLIndicators();
     bindOutputButtons();
 };
@@ -580,7 +582,6 @@ var getFrequencyDistribution = function (inputText, options) {
         }
         _frequencyAnalysis.push([frequencyAnalysis[word], word]);
     }
-    ;
     return sort2DArrayByIndex(_frequencyAnalysis, 0);
 };
 /** init **/

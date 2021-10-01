@@ -23,7 +23,7 @@ const getOrdinal = (num: number) => {
     return 'rd';
   }
   return 'th';
-}
+};
 
 /**
  * Replaces non-alphanumeric characters in a given string with spaces and
@@ -61,7 +61,7 @@ const getTextWidth = (string: string, cssClass = '') => {
   const textWidth = parseFloat(style.width);
   document.body.removeChild(span);
   return textWidth;
-}
+};
 
 /**
  * Sorts a 2D array based on a given column index inside the array matrix. For
@@ -103,15 +103,20 @@ const isVisible = (element: HTMLElement) => {
   if (style.display === 'none') return false;
   if (style.visibility !== 'visible') return false;
   if (parseInt(style.opacity) < 0.1) return false;
-  if (element.offsetWidth + element.offsetHeight +
+  if (
+    element.offsetWidth +
+      element.offsetHeight +
       element.getBoundingClientRect().height +
-      element.getBoundingClientRect().width === 0) {
+      element.getBoundingClientRect().width ===
+    0
+  ) {
     return false;
   }
-  const windowWidth = document.documentElement.clientHeight||window.innerHeight;
+  const windowWidth =
+    document.documentElement.clientHeight || window.innerHeight;
   const elemCenter = {
     x: element.getBoundingClientRect().left + element.offsetWidth / 2,
-    y: element.getBoundingClientRect().top + element.offsetHeight / 2
+    y: element.getBoundingClientRect().top + element.offsetHeight / 2,
   };
   if (elemCenter.x < 0) return false;
   if (elemCenter.y < 0) return false;
@@ -121,7 +126,7 @@ const isVisible = (element: HTMLElement) => {
   if (pointContainer) {
     do {
       if (pointContainer === element) return true;
-    } while (pointContainer = pointContainer.parentNode as HTMLElement);
+    } while ((pointContainer = pointContainer.parentNode as HTMLElement));
   }
   return false;
 };
@@ -143,12 +148,12 @@ const downloadOutput = () => {
   const word = document.querySelectorAll('.fd-row-text');
   for (let i = 0; i < freq.length; i++) {
     let w = (word[i] as HTMLElement).innerText.trim();
-    output += `"${(freq[i] as HTMLElement).innerText}",` +
+    output +=
+      `"${(freq[i] as HTMLElement).innerText}",` +
       `${(occr[i] as HTMLElement).innerText},"${w}"\r\n`;
   }
   downloadCSVData(output);
 };
-
 
 /**  hapax legomena **/
 
@@ -187,19 +192,22 @@ const getHLPercent = (frequencyAnalysis: any[]) => {
   frequencyAnalysis.forEach((a, i) => {
     hlCount += frequencyAnalysis[i][0] === 1 ? 1 : 0;
   });
-  return Math.floor(hlCount / frequencyAnalysis.length * 100);
+  return Math.floor((hlCount / frequencyAnalysis.length) * 100);
 };
 
 const showHLToast = () => {
   const fmt = [
     'https://youtu.be/fCn8zs912OE?t=1014',
-    'https://youtu.be/fCn8zs912OE'
+    'https://youtu.be/fCn8zs912OE',
   ];
-  showToast('Hapax Legomenon: a word that appears only once in a given body ' +
+  showToast(
+    'Hapax Legomenon: a word that appears only once in a given body ' +
       'or collection of text. See: ' +
-      `<a href="${fmt[0]}" target="_blank">${fmt[1]}</a>`, 7000, true);
+      `<a href="${fmt[0]}" target="_blank">${fmt[1]}</a>`,
+    7000,
+    true
+  );
 };
-
 
 /** insights **/
 
@@ -220,12 +228,12 @@ const estimateEntropy = (string: string) => {
 
   string.split('').forEach((c: string) => {
     const _c = parseInt(c);
-    (set[_c] ? set[_c]++ : (set[_c] = 1));
+    set[_c] ? set[_c]++ : (set[_c] = 1);
   });
 
   return Object.keys(set).reduce((acc, c) => {
     const p = set[c] / string.length;
-    return acc - (p * (Math.log(p) / Math.log(2)));
+    return acc - p * (Math.log(p) / Math.log(2));
   }, 0);
 };
 
@@ -235,18 +243,24 @@ const getZipfianAnalysis = (frequencyAnalysis: any[]) => {
   let zipfianScore = 0;
   for (let i = 1; i < (faLength > 20 ? 20 : faLength); i++) {
     const expectedZipfianCount = firstCount / i;
-    const actualCount = frequencyAnalysis[i-1][0];
-    const fivePercent = 5 * actualCount / 100;
-    const twentyPercent = 20 * actualCount / 100;
-    const thirtyPercent = 30 * actualCount / 100;
-    if (expectedZipfianCount > (actualCount - fivePercent) &&
-        expectedZipfianCount < (actualCount + fivePercent)) {
+    const actualCount = frequencyAnalysis[i - 1][0];
+    const fivePercent = (5 * actualCount) / 100;
+    const twentyPercent = (20 * actualCount) / 100;
+    const thirtyPercent = (30 * actualCount) / 100;
+    if (
+      expectedZipfianCount > actualCount - fivePercent &&
+      expectedZipfianCount < actualCount + fivePercent
+    ) {
       zipfianScore += 2;
-    } else if (expectedZipfianCount > (actualCount - twentyPercent) &&
-        expectedZipfianCount < (actualCount + twentyPercent)) {
+    } else if (
+      expectedZipfianCount > actualCount - twentyPercent &&
+      expectedZipfianCount < actualCount + twentyPercent
+    ) {
       zipfianScore += 1;
-    } else if (expectedZipfianCount > (actualCount - thirtyPercent) &&
-        expectedZipfianCount < (actualCount + thirtyPercent)) {
+    } else if (
+      expectedZipfianCount > actualCount - thirtyPercent &&
+      expectedZipfianCount < actualCount + thirtyPercent
+    ) {
       continue;
     } else {
       zipfianScore -= 1;
@@ -265,8 +279,8 @@ const getZipfianAnalysis = (frequencyAnalysis: any[]) => {
 const drawZipfSvg = () => {
   const outputWrap = document.getElementById('output-wrap');
   if (!outputWrap) {
-    return
-  };
+    return;
+  }
   const tableRect = outputWrap.getBoundingClientRect();
   const svgOffsetX = tableRect.left + window.pageXOffset;
   const svgOffsetY = tableRect.top + window.pageYOffset;
@@ -290,10 +304,10 @@ const drawZipfSvg = () => {
     let pathData = '';
     for (let i = 0; i < zipfLineNodes.length; i++) {
       const nodeRect = zipfLineNodes[i].getBoundingClientRect();
-      const pointX = ((nodeRect.x || nodeRect.left) + window.pageXOffset) - (
-          svgOffsetX);
-      const pointY = ((nodeRect.y || nodeRect.top) + window.pageYOffset) - (
-          svgOffsetY);
+      const pointX =
+        (nodeRect.x || nodeRect.left) + window.pageXOffset - svgOffsetX;
+      const pointY =
+        (nodeRect.y || nodeRect.top) + window.pageYOffset - svgOffsetY;
       if (i === 0) {
         pathData += `M${pointX},${pointY}L${pointX},${pointY}`;
         path.setAttribute('d', pathData);
@@ -314,8 +328,11 @@ const drawZipfSvg = () => {
   }
 };
 
-const getInsightGagues = (entropy: number, hlPercent: number,
-    looksZipfian: string) => {
+const getInsightGagues = (
+  entropy: number,
+  hlPercent: number,
+  looksZipfian: string
+) => {
   let entropyTitle = '?';
   let entropyColor = 'gray';
   let contentGuess = 'SOMETHING BORING';
@@ -341,38 +358,42 @@ const getInsightGagues = (entropy: number, hlPercent: number,
   }
 
   return {
-    'entropyGague': `
-      <span id="entropy-gague" style="color: ${entropyColor};" `+
-          `title="Entropy: ${entropy}" entropy="${entropy}">
+    entropyGague:
+      `
+      <span id="entropy-gague" style="color: ${entropyColor};" ` +
+      `title="Entropy: ${entropy}" entropy="${entropy}">
         ${entropyTitle}
       </span>
     `,
-    'contentGuessGague': `
+    contentGuessGague: `
       <span id="content-guess-gague" title="Content guess: ${contentGuess}">
         ${contentGuess}
       </span>
     `,
-    'hlPercentGague': `
+    hlPercentGague: `
       <span id="hl-percent-gague" title="HL percent: ${hlPercent}%">
         ${hlPercent}%
       </span>
     `,
-    'zipfianGague': `
+    zipfianGague: `
       <span id="zipfian-gague" title="Looks zipfian: ${looksZipfian}%">
         ${looksZipfian}
       </span>
-    `
+    `,
   };
 };
 
 const drawTextInsights = (frequencyAnalysis: any[], originalText: string) => {
   const outerWrap = document.getElementById('insights-wrap');
   const innerWrap = document.createElement('div');
-  const wordCount = ((originalText.replace(/[ \n]+/g, ' ')).split(' ')).length;
+  const wordCount = originalText.replace(/[ \n]+/g, ' ').split(' ').length;
   const charCount = originalText.length;
   const entropy = estimateEntropy(originalText);
-  const gagues = getInsightGagues(entropy, getHLPercent(frequencyAnalysis),
-      getZipfianAnalysis(frequencyAnalysis));
+  const gagues = getInsightGagues(
+    entropy,
+    getHLPercent(frequencyAnalysis),
+    getZipfianAnalysis(frequencyAnalysis)
+  );
   innerWrap.setAttribute('id', 'insights-inner-wrap');
 
   innerWrap.innerHTML += `
@@ -422,7 +443,7 @@ const drawTextInsights = (frequencyAnalysis: any[], originalText: string) => {
     outerWrap.appendChild(innerWrap);
     bindInsightToasts();
   }
-}
+};
 
 const bindInsightToasts = () => {
   const entropyTitle = document.getElementById('entropy-title');
@@ -447,13 +468,15 @@ const bindInsightToasts = () => {
         const percentGague = target.nextElementSibling.children[0];
         const percent = (percentGague as HTMLElement).innerText;
         const words = stardust.options.wordSplit ? 'words' : 'characters';
-        showToast(`HL percent: about ${percent} of the ${words} in this text ` +
-          `are <span id="hl-toast" class="toasted">hapax legomena.</a>`,
-          7000, true
+        showToast(
+          `HL percent: about ${percent} of the ${words} in this text ` +
+            `are <span id="hl-toast" class="toasted">hapax legomena.</a>`,
+          7000,
+          true
         );
         const hlToast = document.getElementById('hl-toast');
         if (hlToast) {
-          hlToast.addEventListener('click', (e) => {
+          hlToast.addEventListener('click', e => {
             showHLToast();
           });
         }
@@ -478,7 +501,6 @@ const bindInsightToasts = () => {
           toastText = `This text follows ${toastText}`;
         }
         showToast(toastText, 7000, true);
-
       }
     });
   }
@@ -492,7 +514,6 @@ const bindOutputButtons = () => {
     });
   }
 };
-
 
 /** frequency analysis **/
 
@@ -539,7 +560,7 @@ const analyzeTextFrequency = () => {
                   drawZipfSvg();
                 });
                 if (outputWrap) {
-                  outputWrap.addEventListener('scroll', (e) => {
+                  outputWrap.addEventListener('scroll', e => {
                     drawZipfSvg();
                   });
                 }
@@ -569,12 +590,12 @@ const drawDistributionTable = (frequencyAnalysis: any[]) => {
     const word = `&nbsp;${sanitizeString(frequencyAnalysis[i][1])}`;
     const textWidth = getTextWidth(`${word}.`, 'fd-row-text');
     const zipfPercent = highest / (i + 1);
-    let zipfCss = `left: ${zipfPercent * 100 / highest}%;`;
-    let last = i === (frequencyAnalysis.length - 1) ? ' last' : '';
+    let zipfCss = `left: ${(zipfPercent * 100) / highest}%;`;
+    let last = i === frequencyAnalysis.length - 1 ? ' last' : '';
 
     let percent = 100;
     if (count !== highest) {
-      percent = count * 100 / highest;
+      percent = (count * 100) / highest;
     }
     if (percent < 0.155) {
       percent = 0.155;
@@ -585,23 +606,27 @@ const drawDistributionTable = (frequencyAnalysis: any[]) => {
       barColor = '#005863';
     }
     let backgroundColor = getComputedStyle(document.body).backgroundColor;
-    let css = `background: linear-gradient(` +
-        `90deg, ${barColor} ${percent}%, ${backgroundColor} ${percent}%);`;
+    let css =
+      `background: linear-gradient(` +
+      `90deg, ${barColor} ${percent}%, ${backgroundColor} ${percent}%);`;
     output.push(`
       <tr class="fd-row${last}">
         <td class="fd-row-number-ordinal-wrap">
-          <span class="fd-row-number-ordinal">${(i+1)}${getOrdinal(i+1)}</span>
+          <span class="fd-row-number-ordinal">${i + 1}${getOrdinal(
+      i + 1
+    )}</span>
         </td>
         <td class="fd-row-number${count == 1 ? ' hapax-legomenon-wrap' : ''}">
-          <span class="${count == 1 ? 'hapax-legomenon-indicator' : ''}"></span>${count}
+          <span class="${
+            count == 1 ? 'hapax-legomenon-indicator' : ''
+          }"></span>${count}
         </td>
         <td class="fd-row-spacer"></td>
         <td class="fd-row-text" style="${css}" textwidth="${textWidth}">
           <span class="fd-row-text-word">${word}</span>
           <div class="zipf-line-node" style="${zipfCss}"></div>
         </td>
-      </tr>${last ? '<tr><td></td><td></td><td></td><td></td></tr>' : ''}`
-    );
+      </tr>${last ? '<tr><td></td><td></td><td></td><td></td></tr>' : ''}`);
   }
   const saveButtonSVG = `
     <svg id="save-button-svg">
@@ -620,8 +645,9 @@ const drawDistributionTable = (frequencyAnalysis: any[]) => {
         <td class="fd-row-number-ordinal-heading">FREQUENCY</td>
         <td class="fd-row-number-heading">OCCURANCES</td>
         <td class="fd-row-spacer-heading"></td>
-        <td class="fd-row-text-heading">${stardust.options.wordSplit ?
-            'WORD' : 'CHARACTER'}
+        <td class="fd-row-text-heading">${
+          stardust.options.wordSplit ? 'WORD' : 'CHARACTER'
+        }
           <span id="save-button-wrap">${saveButtonSVG} SAVE</span>
         </td>
       </tr>
@@ -631,12 +657,15 @@ const drawDistributionTable = (frequencyAnalysis: any[]) => {
         <td></td>
         <td></td>
       </tr>
-      ${stardust.options.sortDescending ?
-          output.join('') : output.reverse().join('')}
+      ${
+        stardust.options.sortDescending
+          ? output.join('')
+          : output.reverse().join('')
+      }
     </table>
     <div id="zipf-svg-wrap"></div>`;
-    bindHLIndicators();
-    bindOutputButtons();
+  bindHLIndicators();
+  bindOutputButtons();
 };
 
 /**
@@ -700,10 +729,9 @@ const getFrequencyDistribution = (inputText: string, options: any = {}) => {
       continue;
     }
     _frequencyAnalysis.push([frequencyAnalysis[word], word]);
-  };
+  }
   return sort2DArrayByIndex(_frequencyAnalysis, 0);
 };
-
 
 /** init **/
 
@@ -719,13 +747,19 @@ const initFirstLoadToolitp = () => {
     if (!window.userInteractive) {
       const offsetX = 25;
       const offsetY = 15;
-      const button = document.getElementById('demo-button') as HTMLButtonElement;
+      const button = document.getElementById(
+        'demo-button'
+      ) as HTMLButtonElement;
       const rect = button.getBoundingClientRect();
-      showTipOrb((rect.x || rect.left) + window.pageXOffset + offsetX,
-          (rect.y || rect.top) + window.pageYOffset + offsetY);
+      showTipOrb(
+        (rect.x || rect.left) + window.pageXOffset + offsetX,
+        (rect.y || rect.top) + window.pageYOffset + offsetY
+      );
       self.setTimeout(() => {
-        showTipOrb((rect.x || rect.left) + window.pageXOffset + offsetX,
-            (rect.y || rect.top) + window.pageYOffset + offsetY);
+        showTipOrb(
+          (rect.x || rect.left) + window.pageXOffset + offsetX,
+          (rect.y || rect.top) + window.pageYOffset + offsetY
+        );
       }, 500);
     } else {
       self.clearInterval(window.firstLoadTooltipTimer);

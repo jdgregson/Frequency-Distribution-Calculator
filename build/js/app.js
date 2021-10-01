@@ -17,18 +17,18 @@ window.addEventListener('load', function () {
     // Register a service worker to enable app installation as a PWA
     navigator.serviceWorker.register('sw.js');
     initStardust({
-        'actions': {
-            'toggleBodyText': toggleBodyText
+        actions: {
+            toggleBodyText: toggleBodyText
         },
-        'options': {
-            'hideAds': true,
-            'wordSplit': true,
-            'ignoreCase': true,
-            'removeSpace': false,
-            'showZipfLine': true,
-            'hideBodyText': false,
-            'sortDescending': true,
-            'removePunctuation': true
+        options: {
+            hideAds: true,
+            wordSplit: true,
+            ignoreCase: true,
+            removeSpace: false,
+            showZipfLine: true,
+            hideBodyText: false,
+            sortDescending: true,
+            removePunctuation: true
         }
     });
     initTextFrequencyAnalyzer();

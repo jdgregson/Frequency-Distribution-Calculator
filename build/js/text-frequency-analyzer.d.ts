@@ -8,7 +8,7 @@ interface Window {
  * @param {number} Num A number to return the ordinal suffix of.
  * @return {string} The ordinal suffix of the given number.
  */
-declare const getOrdinal: (num: number) => "th" | "st" | "nd" | "rd";
+declare const getOrdinal: (num: number) => "st" | "nd" | "rd" | "th";
 /**
  * Replaces non-alphanumeric characters in a given string with spaces and
  * returns it. Apostrophes are spared.

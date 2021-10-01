@@ -6,8 +6,7 @@
  * border4 = #555555
  * APPprimaryColor = #efefef
  * APPsecondaryColor = #ffffff
-$APPlinkColor: red;
-
+ * APPlinkColor: red;
  */
 /** defaults and overrides **/
 body {
@@ -28,7 +27,9 @@ a {
 #body-text-inner-wrap {
   margin-bottom: 250px; }
 
-.body-text, .body-text-title, .body-title {
+.body-text,
+.body-text-title,
+.body-title {
   font-family: "Roboto", sans-serif;
   font-weight: lighter;
   font-weight: initial;
@@ -38,7 +39,8 @@ a {
   margin-top: 30px;
   margin-bottom: 30px; }
 
-.coming-soon:after, .new-feature:after {
+.coming-soon:after,
+.new-feature:after {
   font-size: 9px;
   display: inline-block;
   margin-left: 10px;
@@ -49,17 +51,17 @@ a {
   vertical-align: middle; }
 
 .coming-soon:after {
-  content: "COMING SOON"; }
+  content: 'COMING SOON'; }
 
 .new-feature:after {
-  content: "NEW"; }
+  content: 'NEW'; }
 
 #bumper {
   clear: both; }
 
 /** hapax legomena **/
 .hl-visible .hapax-legomenon-indicator::before {
-  content: "HAPAX LEGOMENON";
+  content: 'HAPAX LEGOMENON';
   font-size: 8px;
   white-space: nowrap;
   vertical-align: middle;
@@ -115,7 +117,7 @@ tr:last-of-type td {
   color: #505252;
   background-color: #fafafa; }
 
-input[type="checkbox"] {
+input[type='checkbox'] {
   float: left;
   margin-top: 7px;
   margin-right: 7px; }
@@ -358,7 +360,7 @@ input[type="checkbox"] {
   tr > :nth-child(2) {
     width: 45px; }
   .hl-visible .hapax-legomenon-indicator::before {
-    content: "HL";
+    content: 'HL';
     font-size: 10px;
     background-color: #fff;
     padding-left: 4px;

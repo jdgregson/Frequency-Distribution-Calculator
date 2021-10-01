@@ -17,19 +17,19 @@ window.addEventListener('load', () => {
   navigator.serviceWorker.register('sw.js');
 
   initStardust({
-    'actions': {
-      'toggleBodyText': toggleBodyText
+    actions: {
+      toggleBodyText: toggleBodyText,
     },
-    'options': {
-      'hideAds': true,
-      'wordSplit': true,
-      'ignoreCase': true,
-      'removeSpace': false,
-      'showZipfLine': true,
-      'hideBodyText': false,
-      'sortDescending': true,
-      'removePunctuation': true
-    }
+    options: {
+      hideAds: true,
+      wordSplit: true,
+      ignoreCase: true,
+      removeSpace: false,
+      showZipfLine: true,
+      hideBodyText: false,
+      sortDescending: true,
+      removePunctuation: true,
+    },
   });
   initTextFrequencyAnalyzer();
 
@@ -39,7 +39,7 @@ window.addEventListener('load', () => {
 
   const demoButton = document.getElementById('demo-button');
   if (demoButton) {
-    demoButton.addEventListener('click', (e) => {
+    demoButton.addEventListener('click', e => {
       const demoText = document.getElementById('demo-text');
       if (demoText) {
         const input = document.getElementById('input-textarea');
