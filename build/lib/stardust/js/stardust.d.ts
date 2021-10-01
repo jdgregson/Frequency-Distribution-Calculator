@@ -48,6 +48,12 @@ declare const resetLoadingBar: () => void;
  *     loading bar to.
  */
 declare const updateLoadingBar: (percent: number) => void;
+/**
+ * Updates the height of all bumper divs. Bumpers (a div with class .bumper) are
+ * meant to push content down the page when the div above them is absolutely
+ * positioned.
+ */
+declare const updateBumpers: () => void;
 /** DOM overrides **/
 /**
  * Wraps select elements with the '.select-wrap' div so we can customize them
@@ -160,21 +166,21 @@ declare const toggleSideMenu: (hide?: boolean) => void;
  */
 declare const sanitizeString: (string: string) => string;
 /**
- * The equivalent of Math.random() but utilizing the browser's built in
+ * The equivalent of Math.random() but utilizing the browser's built-in
  * cryptographic libraries.
- * @return {float} A cryptographically secure random floating point value
+ * @return {float} A cryptographically-secure random floating point number
  *     between 0 and 1.
  */
 declare const secureMathRandom: () => number;
 /**
- * Returns a cryptographically secure random string of alphanumeric characters
+ * Returns a cryptographically-secure random string of alphanumeric characters
  * numberOfCharacters long. Special characters can be included by passing true
  * for useSpecialCharacters.
- * @param {number} numberOfCharacters The length of the string that should be
- *     returned.
- * @param {boolean} useSpecialCharacters Whether or not to include special
- *     characters such as # and ( in the returned string.
- * @return {string} A cryptographically secure random string of alphanumeric
+ * @param {number=} numberOfCharacters The length of the string that should be
+ *     returned. Default: 32
+ * @param {boolean=} useSpecialCharacters Whether or not to include special
+ *     characters such as # and ( in the returned string. Default: false
+ * @return {string} A cryptographically-secure random string of alphanumeric
  *     characters numberOfCharacters long.
  */
 declare const secureRandomString: (numberOfCharacters?: number, useSpecialCharacters?: boolean) => string;

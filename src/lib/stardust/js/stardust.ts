@@ -128,6 +128,26 @@ const updateLoadingBar = (percent: number) => {
   }
 };
 
+/**
+ * Updates the height of all bumper divs. Bumpers (a div with class .bumper) are
+ * meant to push content down the page when the div above them is absolutely
+ * positioned.
+ */
+const updateBumpers = () => {
+  const bumpers = document.getElementsByClassName('bumper');
+  for (let i = 0; i < bumpers.length; i++) {
+    const bumper = bumpers[i] as HTMLDivElement;
+    if (
+      bumper.previousElementSibling &&
+      bumper.previousElementSibling.tagName.toLowerCase() === 'div'
+    ) {
+      const bumperTarget = bumper.previousElementSibling as HTMLDivElement;
+      const bumperTargetStyle = getComputedStyle(bumperTarget);
+      bumper.style.height = bumperTargetStyle.height;
+    }
+  }
+};
+
 /** DOM overrides **/
 
 /**
@@ -139,8 +159,10 @@ const rebindSelectObjects = () => {
   const selects = document.querySelectorAll('select:not(.rebound)');
   for (let i = 0; i < selects.length; i++) {
     const select = selects[i];
-    if (select.getAttribute('options-bound') ||
-        select.getAttribute('actions-bound')) {
+    if (
+      select.getAttribute('options-bound') ||
+      select.getAttribute('actions-bound')
+    ) {
       select.removeAttribute('options-bound');
       select.removeAttribute('actions-bound');
     }
@@ -253,8 +275,10 @@ const bindOptions = (stringToBoolean = true) => {
         optionItem.addEventListener('change', (e: Event) => {
           if (e.target) {
             if (isCheckbox) {
-              stardust.options[boundOption] =
-                  (e.target as HTMLInputElement).checked ? true : false;
+              stardust.options[boundOption] = (e.target as HTMLInputElement)
+                .checked
+                ? true
+                : false;
             } else if (isSelect) {
               const target = e.target as HTMLSelectElement;
               if (target.value === 'true' && stringToBoolean) {
@@ -289,7 +313,7 @@ const bindOptions = (stringToBoolean = true) => {
 
     const value = stardust.options[boundOption];
     if (isSelect) {
-      const item = optionItem as HTMLSelectElement
+      const item = optionItem as HTMLSelectElement;
       item.value = value;
       item.setAttribute('options-bound', 'true');
     } else if (isCheckbox) {
@@ -369,7 +393,6 @@ const hideSideMenu = (e: Event) => {
     let target = e.target as HTMLElement;
     if (
       target.id !== 'side-menu-button-svg' &&
-      target.id !== 'side-menu-button-svg' &&
       target.tagName !== 'path' &&
       stardust.sideMenuIsVisible
     ) {
@@ -391,7 +414,9 @@ const hideSideMenu = (e: Event) => {
  */
 const toggleSideMenu = (hide = false) => {
   const sideMenu = document.getElementById('side-menu-wrap') as HTMLDivElement;
-  const headerBack = document.getElementById('header-back-wrap') as HTMLDivElement;
+  const headerBack = document.getElementById(
+    'header-back-wrap'
+  ) as HTMLDivElement;
   const headerTitle = document.getElementById('header-title') as HTMLDivElement;
   if (sideMenu && headerBack && headerTitle) {
     const state = sideMenu.style.marginRight;
@@ -426,15 +451,19 @@ const toggleSideMenu = (hide = false) => {
  * @return {string} A safe string.
  */
 const sanitizeString = (string: string) => {
-  const p = document.createElement('p');
-  p.innerText = string;
-  return p.innerHTML.replace(/<br ?\/?>/g, '\n');
+  return string
+    .replace(/<br ?\/?>/g, '\n')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 };
 
 /**
- * The equivalent of Math.random() but utilizing the browser's built in
+ * The equivalent of Math.random() but utilizing the browser's built-in
  * cryptographic libraries.
- * @return {float} A cryptographically secure random floating point value
+ * @return {float} A cryptographically-secure random floating point number
  *     between 0 and 1.
  */
 const secureMathRandom = () => {
@@ -442,14 +471,14 @@ const secureMathRandom = () => {
 };
 
 /**
- * Returns a cryptographically secure random string of alphanumeric characters
+ * Returns a cryptographically-secure random string of alphanumeric characters
  * numberOfCharacters long. Special characters can be included by passing true
  * for useSpecialCharacters.
- * @param {number} numberOfCharacters The length of the string that should be
- *     returned.
- * @param {boolean} useSpecialCharacters Whether or not to include special
- *     characters such as # and ( in the returned string.
- * @return {string} A cryptographically secure random string of alphanumeric
+ * @param {number=} numberOfCharacters The length of the string that should be
+ *     returned. Default: 32
+ * @param {boolean=} useSpecialCharacters Whether or not to include special
+ *     characters such as # and ( in the returned string. Default: false
+ * @return {string} A cryptographically-secure random string of alphanumeric
  *     characters numberOfCharacters long.
  */
 const secureRandomString = (
@@ -462,9 +491,9 @@ const secureRandomString = (
     'abcdefghijklmnopqrstuvwxyz',
     'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
   ].join('');
-  validChars += useSpecialCharacters
-    ? '`~!@#$%^&*()_+-=[]{}\\|;:\'",<.>/?'
-    : '';
+  if (useSpecialCharacters) {
+    validChars += '`~!@#$%^&*()_+-=[]{}\\|;:\'",<.>/?';
+  }
   while (result.length < numberOfCharacters) {
     result += validChars[Math.floor(secureMathRandom() * validChars.length)];
   }
@@ -532,7 +561,7 @@ const hideSplash = () => {
   if (splash) {
     splash.style.opacity = '0';
     self.setTimeout(() => {
-      document.body.removeChild(splash);
+      (splash.parentElement as HTMLElement).removeChild(splash);
     }, 200);
   }
 };
@@ -611,8 +640,11 @@ const hideModalByEvent = (e: Event) => {
   if (e.target) {
     const target = e.target as HTMLElement;
     const classList = target.classList;
-    if (classList && (classList.contains('modal-wrap') ||
-        classList.contains('modal-close-button'))) {
+    if (
+      classList &&
+      (classList.contains('modal-wrap') ||
+        classList.contains('modal-close-button'))
+    ) {
       const modals = document.getElementsByClassName('modal-wrap');
       for (let i = 0; i < modals.length; i++) {
         const modal = modals[i] as HTMLDivElement;
@@ -658,14 +690,13 @@ const initStardust = (initOptions: AppOptions) => {
         document.location.reload();
       },
     },
-    themes: [
-      'dark',
-      'light'
-    ],
+    themes: ['dark', 'light'],
     selectedTheme: 'light',
-    sideMenuIsVisible: false
+    sideMenuIsVisible: false,
   };
 
+  // Merge Stardust built-in actions, themes, and options with any app-provided
+  // ones.
   if (initOptions) {
     if (initOptions.actions) {
       stardust.actions = {...stardust.actions, ...initOptions.actions};
@@ -678,11 +709,14 @@ const initStardust = (initOptions: AppOptions) => {
     }
   }
 
+  // Load options and themes.
   stardust.options = getOptions();
   applyStardustTheme(stardust.options.theme);
 
-  const sideMenuButton =
-      document.getElementById('side-menu-button-wrap') as HTMLDivElement;
+  // Initialize side menu.
+  const sideMenuButton = document.getElementById(
+    'side-menu-button-wrap'
+  ) as HTMLDivElement;
   if (sideMenuButton) {
     sideMenuButton.addEventListener('click', () => {
       toggleSideMenu();
@@ -691,6 +725,22 @@ const initStardust = (initOptions: AppOptions) => {
       hideSideMenu(e);
     });
   }
+
+  // Set bumpers to update every 100ms for two seconds after load to ensure
+  // they accommodate content that may be added to the DOM after load, and then
+  // set bumpers to update whenever the window is resized.
+  // TODO: Look into doing this with a ResizeObserver, but there is no IE 11
+  // support. Maybe a MutationObserver instead?
+  updateBumpers();
+  const bumperPageloadTimer = self.setInterval(() => {
+    updateBumpers();
+  }, 100);
+  self.setTimeout(() => {
+    self.clearInterval(bumperPageloadTimer);
+  }, 2000);
+  window.addEventListener('resize', () => {
+    updateBumpers();
+  });
 
   bindOptions();
   bindActions();

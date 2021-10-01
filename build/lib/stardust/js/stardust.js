@@ -110,6 +110,23 @@ var updateLoadingBar = function (percent) {
         }
     }
 };
+/**
+ * Updates the height of all bumper divs. Bumpers (a div with class .bumper) are
+ * meant to push content down the page when the div above them is absolutely
+ * positioned.
+ */
+var updateBumpers = function () {
+    var bumpers = document.getElementsByClassName('bumper');
+    for (var i = 0; i < bumpers.length; i++) {
+        var bumper = bumpers[i];
+        if (bumper.previousElementSibling &&
+            bumper.previousElementSibling.tagName.toLowerCase() === 'div') {
+            var bumperTarget = bumper.previousElementSibling;
+            var bumperTargetStyle = getComputedStyle(bumperTarget);
+            bumper.style.height = bumperTargetStyle.height;
+        }
+    }
+};
 /** DOM overrides **/
 /**
  * Wraps select elements with the '.select-wrap' div so we can customize them
@@ -232,8 +249,10 @@ var bindOptions = function (stringToBoolean) {
                 optionItem.addEventListener('change', function (e) {
                     if (e.target) {
                         if (isCheckbox) {
-                            stardust.options[boundOption] =
-                                e.target.checked ? true : false;
+                            stardust.options[boundOption] = e.target
+                                .checked
+                                ? true
+                                : false;
                         }
                         else if (isSelect) {
                             var target = e.target;
@@ -353,7 +372,6 @@ var hideSideMenu = function (e) {
     if (e.target) {
         var target = e.target;
         if (target.id !== 'side-menu-button-svg' &&
-            target.id !== 'side-menu-button-svg' &&
             target.tagName !== 'path' &&
             stardust.sideMenuIsVisible) {
             while (target && target !== document.body) {
@@ -408,28 +426,32 @@ var toggleSideMenu = function (hide) {
  * @return {string} A safe string.
  */
 var sanitizeString = function (string) {
-    var p = document.createElement('p');
-    p.innerText = string;
-    return p.innerHTML.replace(/<br ?\/?>/g, '\n');
+    return string
+        .replace(/<br ?\/?>/g, '\n')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 };
 /**
- * The equivalent of Math.random() but utilizing the browser's built in
+ * The equivalent of Math.random() but utilizing the browser's built-in
  * cryptographic libraries.
- * @return {float} A cryptographically secure random floating point value
+ * @return {float} A cryptographically-secure random floating point number
  *     between 0 and 1.
  */
 var secureMathRandom = function () {
     return window.crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
 };
 /**
- * Returns a cryptographically secure random string of alphanumeric characters
+ * Returns a cryptographically-secure random string of alphanumeric characters
  * numberOfCharacters long. Special characters can be included by passing true
  * for useSpecialCharacters.
- * @param {number} numberOfCharacters The length of the string that should be
- *     returned.
- * @param {boolean} useSpecialCharacters Whether or not to include special
- *     characters such as # and ( in the returned string.
- * @return {string} A cryptographically secure random string of alphanumeric
+ * @param {number=} numberOfCharacters The length of the string that should be
+ *     returned. Default: 32
+ * @param {boolean=} useSpecialCharacters Whether or not to include special
+ *     characters such as # and ( in the returned string. Default: false
+ * @return {string} A cryptographically-secure random string of alphanumeric
  *     characters numberOfCharacters long.
  */
 var secureRandomString = function (numberOfCharacters, useSpecialCharacters) {
@@ -441,9 +463,9 @@ var secureRandomString = function (numberOfCharacters, useSpecialCharacters) {
         'abcdefghijklmnopqrstuvwxyz',
         'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
     ].join('');
-    validChars += useSpecialCharacters
-        ? '`~!@#$%^&*()_+-=[]{}\\|;:\'",<.>/?'
-        : '';
+    if (useSpecialCharacters) {
+        validChars += '`~!@#$%^&*()_+-=[]{}\\|;:\'",<.>/?';
+    }
     while (result.length < numberOfCharacters) {
         result += validChars[Math.floor(secureMathRandom() * validChars.length)];
     }
@@ -507,7 +529,7 @@ var hideSplash = function () {
     if (splash) {
         splash.style.opacity = '0';
         self.setTimeout(function () {
-            document.body.removeChild(splash);
+            splash.parentElement.removeChild(splash);
         }, 200);
     }
 };
@@ -565,8 +587,9 @@ var hideModalByEvent = function (e) {
     if (e.target) {
         var target = e.target;
         var classList = target.classList;
-        if (classList && (classList.contains('modal-wrap') ||
-            classList.contains('modal-close-button'))) {
+        if (classList &&
+            (classList.contains('modal-wrap') ||
+                classList.contains('modal-close-button'))) {
             var modals = document.getElementsByClassName('modal-wrap');
             for (var i = 0; i < modals.length; i++) {
                 var modal = modals[i];
@@ -608,13 +631,12 @@ var initStardust = function (initOptions) {
                 document.location.reload();
             }
         },
-        themes: [
-            'dark',
-            'light'
-        ],
+        themes: ['dark', 'light'],
         selectedTheme: 'light',
         sideMenuIsVisible: false
     };
+    // Merge Stardust built-in actions, themes, and options with any app-provided
+    // ones.
     if (initOptions) {
         if (initOptions.actions) {
             stardust.actions = __assign(__assign({}, stardust.actions), initOptions.actions);
@@ -626,8 +648,10 @@ var initStardust = function (initOptions) {
             stardust.appDefaultOptions = initOptions.options;
         }
     }
+    // Load options and themes.
     stardust.options = getOptions();
     applyStardustTheme(stardust.options.theme);
+    // Initialize side menu.
     var sideMenuButton = document.getElementById('side-menu-button-wrap');
     if (sideMenuButton) {
         sideMenuButton.addEventListener('click', function () {
@@ -637,6 +661,21 @@ var initStardust = function (initOptions) {
             hideSideMenu(e);
         });
     }
+    // Set bumpers to update every 100ms for two seconds after load to ensure
+    // they accommodate content that may be added to the DOM after load, and then
+    // set bumpers to update whenever the window is resized.
+    // TODO: Look into doing this with a ResizeObserver, but there is no IE 11
+    // support. Maybe a MutationObserver instead?
+    updateBumpers();
+    var bumperPageloadTimer = self.setInterval(function () {
+        updateBumpers();
+    }, 100);
+    self.setTimeout(function () {
+        self.clearInterval(bumperPageloadTimer);
+    }, 2000);
+    window.addEventListener('resize', function () {
+        updateBumpers();
+    });
     bindOptions();
     bindActions();
     saveOptions();

@@ -18,11 +18,11 @@
  * $SDtertiaryColor
  * $SDactionColor
  * $SDactionTextColor
+ * $SDlinkTextColor
+ * $SDlinkTextColorVisited
  * $SDtitleTextColor
  * $SDinvertedActionTextColor
  * $SDoutlineColor
- * $SDlinkColor
- * $SDlinkColorVisited
  * $SDtextColor
  * $SDplaceholderTextColor
  * $SDwarningColor
@@ -40,14 +40,27 @@ body {
   background-color: #ffffff;
   color: #505252; }
 
-body, * {
+body,
+* {
   font-family: "Roboto", sans-serif; }
 
 img {
   width: 100%;
   height: auto; }
 
+a,
+a:link {
+  color: #0000ee; }
+
+a:visited,
+a:active {
+  color: #5a1a8b; }
+
 /** structural wraps **/
+#outer-wrap {
+  width: 100vw;
+  height: 100vh; }
+
 #content-inner-wrap {
   padding: 10px;
   max-width: 1200px;
@@ -83,7 +96,7 @@ option {
   display: inline-block; }
 
 .select-wrap::after {
-  content: "^";
+  content: '^';
   font-family: "Roboto", sans-serif;
   font-size: 14px;
   color: #3434f9;
@@ -117,19 +130,19 @@ button,
   border: 2px solid transparent; }
 
 /** check boxes **/
-[type="checkbox"]:not(:checked),
-[type="checkbox"]:checked {
+[type='checkbox']:not(:checked),
+[type='checkbox']:checked {
   position: absolute;
   left: -9999px; }
 
-[type="checkbox"]:not(:checked) + label,
-[type="checkbox"]:checked + label {
+[type='checkbox']:not(:checked) + label,
+[type='checkbox']:checked + label {
   position: relative;
   padding-left: 1.95em;
   cursor: pointer; }
 
-[type="checkbox"]:not(:checked) + label:before,
-[type="checkbox"]:checked + label:before {
+[type='checkbox']:not(:checked) + label:before,
+[type='checkbox']:checked + label:before {
   content: '';
   position: absolute;
   left: 0;
@@ -141,52 +154,52 @@ button,
   border-radius: 4px;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); }
 
-.large[type="checkbox"]:not(:checked) + label:before,
-.large[type="checkbox"]:checked + label:before {
+.large[type='checkbox']:not(:checked) + label:before,
+.large[type='checkbox']:checked + label:before {
   width: 20px;
   height: 20px; }
 
-[type="checkbox"]:not(:checked) + label:after,
-[type="checkbox"]:checked + label:after {
+[type='checkbox']:not(:checked) + label:after,
+[type='checkbox']:checked + label:after {
   content: 'L';
   position: absolute;
   top: 3px;
   left: 5px;
   line-height: 0.8;
   color: #3434f9;
-  transition: all .2s;
-  font-family: "Roboto", sans-serif;
+  transition: all 0.2s;
+  font-family: 'Roboto', sans-serif;
   font-weight: bold;
   transform: scaleX(-1) rotate(-35deg) !important;
   font-size: 15px; }
 
-.large[type="checkbox"]:not(:checked) + label:after,
-.large[type="checkbox"]:checked + label:after {
+.large[type='checkbox']:not(:checked) + label:after,
+.large[type='checkbox']:checked + label:after {
   font-size: 20px;
   left: 7px; }
 
-[type="checkbox"]:not(:checked) + label:after {
+[type='checkbox']:not(:checked) + label:after {
   opacity: 0;
   transform: scale(0); }
 
-[type="checkbox"]:checked + label:after {
+[type='checkbox']:checked + label:after {
   opacity: 1;
   transform: scale(1); }
 
-[type="checkbox"]:disabled:not(:checked) + label:before,
-[type="checkbox"]:disabled:checked + label:before {
+[type='checkbox']:disabled:not(:checked) + label:before,
+[type='checkbox']:disabled:checked + label:before {
   box-shadow: none;
   border-color: #dddddd;
   background-color: #efefef; }
 
-[type="checkbox"]:disabled:checked + label:after {
+[type='checkbox']:disabled:checked + label:after {
   color: #efefef; }
 
-[type="checkbox"]:disabled + label {
+[type='checkbox']:disabled + label {
   color: #efefef; }
 
-[type="checkbox"]:checked:focus + label:before,
-[type="checkbox"]:not(:checked):focus + label:before {
+[type='checkbox']:checked:focus + label:before,
+[type='checkbox']:not(:checked):focus + label:before {
   border: 2px solid #3434f9; }
 
 label:hover:before {
@@ -527,7 +540,7 @@ label:hover:after {
   cursor: pointer; }
 
 .side-menu-row:hover {
-  background-color: #fefefe; }
+  background-color: #f6f6f6; }
 
 .side-menu-hr {
   margin: 10px;
@@ -589,8 +602,3 @@ label:hover:after {
     width: 90vw;
     height: 90vh;
     margin: 5vh 5vw; } }
-
-@media (max-width: 450px) {
-  #header-title {
-    font-size: 15px;
-    line-height: 30px; } }
